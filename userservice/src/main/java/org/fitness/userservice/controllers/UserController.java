@@ -1,5 +1,6 @@
 package org.fitness.userservice.controllers;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.fitness.userservice.models.User;
 import org.fitness.userservice.requests.RegisterRequest;
@@ -8,10 +9,7 @@ import org.fitness.userservice.responses.UserResponse;
 import org.fitness.userservice.services.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/users")
@@ -19,8 +17,22 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
     private UserService userService;
 //   Done This
+//    @GetMapping("/getUserById/${user_id}")
+//    public ResponseEntity<ResponseGlobal> getUserById(@PathVariable String userId){
+//        ResponseGlobal response = new ResponseGlobal();
+//
+//        try
+//        {
+//
+//        }
+//
+//    }
+
+
+
+
     @PostMapping("save")
-    public ResponseEntity<ResponseGlobal> save(@RequestBody RegisterRequest request){
+    public ResponseEntity<ResponseGlobal> save(@Valid @RequestBody RegisterRequest request){
         ResponseGlobal response = new ResponseGlobal();
         try{
                User user = userService.registerUser(request);
