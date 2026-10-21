@@ -16,17 +16,27 @@ import org.springframework.web.bind.annotation.*;
 @AllArgsConstructor
 public class UserController {
     private UserService userService;
-//   Done This
-//    @GetMapping("/getUserById/${user_id}")
-//    public ResponseEntity<ResponseGlobal> getUserById(@PathVariable String userId){
-//        ResponseGlobal response = new ResponseGlobal();
-//
-//        try
-//        {
-//
-//        }
-//
-//    }
+
+    @GetMapping("/getUserById/{userId}")
+    public ResponseEntity<ResponseGlobal> getUserById(@PathVariable String userId){
+        ResponseGlobal response = new ResponseGlobal();
+
+        try
+        {
+             User user = userService.getUser(userId);
+             response.setMessage("User Fetched Successfully");
+             response.setData(user);
+
+             return new ResponseEntity<>(response,HttpStatus.OK);
+        }
+        catch(Exception e){
+            response.setMessage(e.getMessage());
+            response.setData(null);
+
+            return new ResponseEntity<>(response,HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+    }
 
 
 
