@@ -2,12 +2,13 @@ package org.fitness.userservice.models;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
+
+
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+
 
 @Entity
 @Table(name = "users")
@@ -33,4 +34,6 @@ public class User {
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+
+
 }

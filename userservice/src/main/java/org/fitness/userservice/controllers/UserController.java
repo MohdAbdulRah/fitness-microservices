@@ -23,7 +23,7 @@ public class UserController {
 
         try
         {
-             User user = userService.getUser(userId);
+             UserResponse user = userService.getUser(userId);
              response.setMessage("User Fetched Successfully");
              response.setData(user);
 

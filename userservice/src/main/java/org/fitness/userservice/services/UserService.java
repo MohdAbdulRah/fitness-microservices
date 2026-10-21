@@ -5,6 +5,7 @@ import org.fitness.userservice.models.User;
 import org.fitness.userservice.models.UserRole;
 import org.fitness.userservice.repositories.repositories.UserRepository;
 import org.fitness.userservice.requests.RegisterRequest;
+import org.fitness.userservice.responses.UserResponse;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -33,12 +34,18 @@ public class UserService {
         User user1 = userRepository.save(user);
         return user1;
     }
-    public User getUser(String userId){
-        Optional<User> user = userRepository.findById(userId);
-        if(user == null){
-            throw new RuntimeException("User Doesnt Exists With that Id");
-        }
+    public UserResponse getUser(String userId){
+      User user =  userRepository.findById(userId)
+              .orElseThrow(() -> {
+                  throw new RuntimeException("User With Id doesnt exists");
+              });
+      UserResponse response = new UserResponse();
+      response.setId(user.getId());
+      response.setEmail(user.getEmail());
+      response.setFirstName(user.getFirstName());
+      response.setLastName(user.getLastName());
+      response.setUserRole(user.getRole().toString());
 
-        return user.orElseThrow(() -> new RuntimeException("User With that Id Doesnt exists"));
+      return response;
     }
 }
