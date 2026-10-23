@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
     private UserService userService;
 
-    @GetMapping("/getUserById/{userId}")
+    @GetMapping("getUserById/{userId}")
     public ResponseEntity<ResponseGlobal> getUserById(@PathVariable String userId){
         ResponseGlobal response = new ResponseGlobal();
 
@@ -62,5 +62,12 @@ public class UserController {
               response.setData(null);
               return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
           }
+    }
+
+
+    @GetMapping("{userId}/validate")
+    public ResponseEntity<Boolean> validate(@PathVariable String userId){
+        Boolean flag = userService.existsByUserId(userId);
+        return new ResponseEntity<>(flag,HttpStatus.OK);
     }
 }

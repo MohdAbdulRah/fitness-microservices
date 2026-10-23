@@ -14,10 +14,12 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ActivityService {
     private final ActivityRepository activityRepository;
-
+    private final UserWebClientService userWebClientService;
 
     public ActivityResponse saveActivity(ActivityRequest request){
-
+       if(!userWebClientService.userExistsOrNot(request.getUserId())){
+           throw new RuntimeException("User With This ID Doesnt Exists");
+       }
 
         Activity activity = new Activity();
         activity.setUserId(request.getUserId());

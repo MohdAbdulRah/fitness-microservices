@@ -8,7 +8,7 @@ import java.util.Map;
 
 @Data
 public class ActivityRequest {
-    private String UserId;
+    private String userId;
     private String type;
 
     private Integer duration;
