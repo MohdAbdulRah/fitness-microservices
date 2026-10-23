@@ -14,12 +14,10 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ActivityService {
     private final ActivityRepository activityRepository;
-    private final UserRepository userRepository;
+
 
     public ActivityResponse saveActivity(ActivityRequest request){
-        User user = userRepository.findById(request.getUserId()).orElseThrow(() ->{
-            throw new RuntimeException("UserId Doesnt exists");
-        });
+
 
         Activity activity = new Activity();
         activity.setUserId(request.getUserId());
@@ -29,14 +27,16 @@ public class ActivityService {
         activity.setCaloriesBurned(request.getCaloriesBurned());
         activity.setAdditionalMetrics(request.getAdditionalMetrics());
 
+        activityRepository.save(activity);
         ActivityResponse activityResponse = new ActivityResponse();
-        activityResponse.setUserId(user);
+        activityResponse.setUserId(activity.getUserId());
         activityResponse.setType(activity.getType().toString());
         activityResponse.setStartTime(request.getStartTime());
         activityResponse.setDuration(request.getDuration());
         activityResponse.setCaloriesBurned(request.getCaloriesBurned());
         activityResponse.setAdditionalMetrics(request.getAdditionalMetrics());
-
+        activityResponse.setCreatedAt(activity.getCreatedAt());
+        activityResponse.setUpdatedAt(activity.getUpdatedAt());
         return activityResponse;
     }
 }
