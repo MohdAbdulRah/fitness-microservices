@@ -31,6 +31,7 @@ public class ActivityService {
 
         activityRepository.save(activity);
         ActivityResponse activityResponse = new ActivityResponse();
+        activityResponse.setId(activity.getId());
         activityResponse.setUserId(activity.getUserId());
         activityResponse.setType(activity.getType().toString());
         activityResponse.setStartTime(request.getStartTime());

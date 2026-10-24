@@ -7,6 +7,9 @@ import org.fitness_microservices.aiService.requests.RecommendationRequest;
 import org.fitness_microservices.aiService.responses.RecommendationResponse;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class RecommendationService {
@@ -35,5 +38,47 @@ public class RecommendationService {
                 .build();
 
         return response;
+    }
+
+    public List<RecommendationResponse> getUserRecom(String userId){
+        List<Recommendation> list = recommendationRepository.findAllByUserId(userId);
+        List<RecommendationResponse> recommendationResponses = list.stream()
+                .map(recommendation -> RecommendationResponse
+                        .builder()
+                        .id(recommendation.getId())
+                        .userId(recommendation.getUserId())
+                        .activityId(recommendation.getActivityId())
+                        .recommendation(recommendation.getRecommendation())
+                        .improvements(recommendation.getImprovements())
+                        .safety(recommendation.getSafety())
+                        .suggestions(recommendation.getSuggestions())
+                        .createdAt(recommendation.getCreatedAt())
+                        .updatedAt(recommendation.getUpdatedAt())
+                        .build()
+                )
+                .collect(Collectors.toList());
+        return recommendationResponses;
+    }
+
+    public List<RecommendationResponse> getActivityRecommend(String activityId) {
+        List<Recommendation> list = recommendationRepository.findAllByActivityId(activityId);
+
+        List<RecommendationResponse> responnse = list
+                .stream()
+                .map(recommendation -> RecommendationResponse.builder()
+                        .id(recommendation.getId())
+                        .userId(recommendation.getUserId())
+                        .activityId(recommendation.getActivityId())
+                        .recommendation(recommendation.getRecommendation())
+                        .improvements(recommendation.getImprovements())
+                        .safety(recommendation.getSafety())
+                        .suggestions(recommendation.getSuggestions())
+                        .createdAt(recommendation.getCreatedAt())
+                        .updatedAt(recommendation.getUpdatedAt())
+                        .build())
+                .collect(Collectors.toList());
+
+        return  responnse;
+
     }
 }

@@ -7,10 +7,9 @@ import org.fitness_microservices.aiService.responses.ResponseGlobal;
 import org.fitness_microservices.aiService.services.RecommendationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -31,6 +30,40 @@ public class RecommendationController {
             response.setData(null);
             response.setMessage(e.getMessage());
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+
+    @GetMapping("getUserRecommendation/{userId}")
+    public ResponseEntity<ResponseGlobal> getUserRecommendation(@PathVariable String userId){
+        ResponseGlobal response = new ResponseGlobal();
+        try{
+            List<RecommendationResponse> recommend = recommendationService.getUserRecom(userId);
+            response.setMessage("Fetched Users Recommendation Succesfully");
+            response.setData(recommend);
+            return new ResponseEntity<>(response,HttpStatus.OK);
+        }
+        catch(Exception e){
+            response.setData(null);
+            response.setMessage(e.getMessage());
+            return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
+        }
+
+
+    }
+
+    @GetMapping("getActivityRecommendation/{activityId}")
+    public ResponseEntity<ResponseGlobal> getActivityRecommendation(@PathVariable String activityId){
+        ResponseGlobal response = new ResponseGlobal();
+        try{
+            List<RecommendationResponse> recommed = recommendationService.getActivityRecommend(activityId);
+            response.setMessage("Successfully Fetched the Recommendations");
+            response.setData(recommed);
+            return new ResponseEntity<>(response,HttpStatus.OK);
+        } catch (Exception e) {
+            response.setData(null);
+            response.setMessage(e.getMessage());
+            return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
         }
     }
 }

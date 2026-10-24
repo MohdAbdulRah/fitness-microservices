@@ -8,6 +8,7 @@ import java.util.Map;
 
 @Data
 public class ActivityResponse {
+    public String id;
     private String UserId;
     private String type;
 
