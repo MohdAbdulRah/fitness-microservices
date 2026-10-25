@@ -1,5 +1,6 @@
 package org.fitness.activityService.controllers;
 
+
 import lombok.RequiredArgsConstructor;
 import org.fitness.activityService.requests.ActivityRequest;
 import org.fitness.activityService.responses.ActivityResponse;
@@ -7,10 +8,7 @@ import org.fitness.activityService.responses.ResponseGlobal;
 import org.fitness.activityService.services.ActivityService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -35,5 +33,14 @@ public class ActivityController {
         }
     }
 
+    @GetMapping("/{activityId}/validate")
+    public ResponseEntity<Boolean> validate(@PathVariable String activityId){
+
+        try {
+            return new ResponseEntity<>(activityService.existsOrNot(activityId),HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
+        }
+    }
 
 }

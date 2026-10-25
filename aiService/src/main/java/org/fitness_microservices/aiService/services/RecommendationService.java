@@ -14,8 +14,15 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class RecommendationService {
     private final RecommendationRepository recommendationRepository;
+    private final UserWebClientService userServiceWebClient;
 
     public RecommendationResponse save(RecommendationRequest request){
+        if(!userServiceWebClient.userExistsOrNot(request.getUserId())){
+            throw new RuntimeException("User With this UserId Doesnt Exists");
+        }if(!userServiceWebClient.activityExistsOrNot(request.getActivityId())){
+            throw new RuntimeException("Activity With this ActivityId Doesnt Exists");
+        }
+
         Recommendation recommendation = Recommendation.builder()
                 .activityId(request.getActivityId())
                 .userId(request.getUserId())

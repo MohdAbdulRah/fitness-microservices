@@ -8,6 +8,7 @@ import org.fitness.activityService.requests.ActivityRequest;
 import org.fitness.activityService.responses.ActivityResponse;
 import org.fitness.userservice.models.User;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -41,5 +42,9 @@ public class ActivityService {
         activityResponse.setCreatedAt(activity.getCreatedAt());
         activityResponse.setUpdatedAt(activity.getUpdatedAt());
         return activityResponse;
+    }
+
+    public Boolean existsOrNot(String activityId) {
+        return activityRepository.existsById(activityId);
     }
 }
