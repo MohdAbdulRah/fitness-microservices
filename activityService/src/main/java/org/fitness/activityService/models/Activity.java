@@ -17,7 +17,7 @@ import java.util.Map;
 public class Activity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private String Id;
+    private String id;
 
     private String userId;
 

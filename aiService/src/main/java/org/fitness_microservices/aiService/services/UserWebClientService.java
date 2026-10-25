@@ -2,6 +2,7 @@ package org.fitness_microservices.aiService.services;
 
 
 import lombok.RequiredArgsConstructor;
+import org.fitness_microservices.aiService.models.Activity;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -37,5 +38,18 @@ public class UserWebClientService {
             throw new RuntimeException(e);
         }
 //        return false;
+    }
+    public Activity activityGetOrNot(String activityId){
+        System.out.println("Received activityId: " + activityId);
+        try {
+            return activityServiceWebClient.get()
+                    .uri("/api/activities/{activityId}/getById",activityId).accept(MediaType.APPLICATION_JSON)
+                    .retrieve()
+                    .bodyToMono(Activity.class)
+                    .block();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
     }
 }

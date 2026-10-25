@@ -14,6 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class ActivityService {
@@ -55,20 +57,39 @@ public class ActivityService {
                         );
                     }
                 });
-        ActivityResponse activityResponse = new ActivityResponse();
-        activityResponse.setId(activity.getId());
-        activityResponse.setUserId(activity.getUserId());
-        activityResponse.setType(activity.getType().toString());
-        activityResponse.setStartTime(request.getStartTime());
-        activityResponse.setDuration(request.getDuration());
-        activityResponse.setCaloriesBurned(request.getCaloriesBurned());
-        activityResponse.setAdditionalMetrics(request.getAdditionalMetrics());
-        activityResponse.setCreatedAt(activity.getCreatedAt());
-        activityResponse.setUpdatedAt(activity.getUpdatedAt());
+        ActivityResponse activityResponse = ActivityResponse.builder()
+                .id(activity.getId())
+                .userId(activity.getUserId())
+        .type(activity.getType().toString())
+                .startTime(request.getStartTime())
+                .duration(request.getDuration())
+                .caloriesBurned(request.getCaloriesBurned())
+                .additionalMetrics(request.getAdditionalMetrics())
+                .createdAt(activity.getCreatedAt())
+                .updatedAt(activity.getUpdatedAt())
+                .build();
         return activityResponse;
     }
 
     public Boolean existsOrNot(String activityId) {
         return activityRepository.existsById(activityId);
+    }
+
+    public ActivityResponse getActivity(String activityId) {
+        Activity activity = activityRepository.findById(activityId)
+                .orElseThrow(() -> new RuntimeException("Activity Not Found"));
+
+        ActivityResponse response = ActivityResponse.builder()
+                .id(activity.getId())
+                .userId(activity.getUserId())
+                .type(activity.getType().toString())
+                .additionalMetrics(activity.getAdditionalMetrics())
+                .caloriesBurned(activity.getCaloriesBurned())
+                .duration(activity.getDuration())
+                .startTime(activity.getStartTime())
+                .createdAt(activity.getCreatedAt())
+                .updatedAt(activity.getUpdatedAt())
+                .build();
+        return response;
     }
 }

@@ -1,6 +1,7 @@
 package org.fitness_microservices.aiService.services;
 
 import lombok.RequiredArgsConstructor;
+import org.fitness_microservices.aiService.models.Activity;
 import org.fitness_microservices.aiService.models.Recommendation;
 import org.fitness_microservices.aiService.repositries.RecommendationRepository;
 import org.fitness_microservices.aiService.requests.RecommendationRequest;
@@ -87,5 +88,10 @@ public class RecommendationService {
 
         return  responnse;
 
+    }
+
+    public Activity getActivity(String activityId) {
+        Activity activity = userServiceWebClient.activityGetOrNot(activityId);
+        return activity;
     }
 }

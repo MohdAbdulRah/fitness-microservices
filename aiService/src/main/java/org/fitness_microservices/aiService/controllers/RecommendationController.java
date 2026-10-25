@@ -1,9 +1,12 @@
 package org.fitness_microservices.aiService.controllers;
 
 import lombok.RequiredArgsConstructor;
+import org.fitness_microservices.aiService.models.Activity;
 import org.fitness_microservices.aiService.requests.RecommendationRequest;
 import org.fitness_microservices.aiService.responses.RecommendationResponse;
 import org.fitness_microservices.aiService.responses.ResponseGlobal;
+import org.fitness_microservices.aiService.services.ActivityAIService;
+import org.fitness_microservices.aiService.services.GeminiService;
 import org.fitness_microservices.aiService.services.RecommendationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +19,13 @@ import java.util.List;
 @RequestMapping("/api/recommendations")
 public class RecommendationController {
     private final RecommendationService recommendationService;
+    private final ActivityAIService activityAIService;
+
+    @GetMapping("generateRecommendation/{activityId}")
+    public String generateRecommendation(@PathVariable String activityId){
+        Activity activity = recommendationService.getActivity(activityId);
+        return activityAIService.generateRecommendation(activity);
+    }
 
     @PostMapping("save")
     public ResponseEntity<ResponseGlobal> save(@RequestBody RecommendationRequest request){

@@ -42,5 +42,14 @@ public class ActivityController {
             return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
         }
     }
+    @GetMapping("/{activityId}/getById")
+    public ResponseEntity<ActivityResponse> getById(@PathVariable String activityId){
+
+        try {
+            return new ResponseEntity<>(activityService.getActivity(activityId),HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(new ActivityResponse(), HttpStatus.BAD_REQUEST);
+        }
+    }
 
 }
