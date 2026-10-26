@@ -3,6 +3,7 @@ package org.fitness_microservices.aiService.services;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.fitness_microservices.aiService.models.Activity;
+import org.fitness_microservices.aiService.models.Recommendation;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +22,7 @@ public class ActivityMessageListener {
         log.info("========== KAFKA MESSAGE RECEIVED ==========");
         log.info("Activity: {}", activity);
         log.info("User ID: {}", activity.getUserId());
-        activityAIService.generateRecommendation(activity);
+        Recommendation recom = activityAIService.generateRecommendation(activity);
+        log.info("=========DOne========="+recom.getRecommendation());
     }
 }

@@ -27,6 +27,8 @@ public class Recommendation {
     private String activityId;
 
     private String userId;
+
+    @Column(columnDefinition = "TEXT")
     private String recommendation;
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "json")

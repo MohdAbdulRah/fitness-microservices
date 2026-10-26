@@ -27,28 +27,61 @@ public class ActivityAIService {
         return processAIResponse(activity,response);
     }
 
+
     private Recommendation processAIResponse(Activity activity, String response) {
-        try{
+        try {
             ObjectMapper mapper = new ObjectMapper();
+
+            // Step 1: Parse the outer Gemini API response
             JsonNode rootNode = mapper.readTree(response);
+
             JsonNode textNode = rootNode.path("candidates")
-                    .get(0).path("content").path("parts")
-                    .get(0).path("text");
+                    .path(0)
+                    .path("content")
+                    .path("parts")
+                    .path(0)
+                    .path("text");
 
-           String jsonCntent = textNode.asText()
-                   .replaceAll("\\n","")
-                   .trim();
-//           log.info("Response From Clean AI {}",jsonCntent);
+            if (textNode.isMissingNode() || textNode.isNull()) {
+                throw new IllegalArgumentException(
+                        "Gemini response does not contain candidate text"
+                );
+            }
 
-            JsonNode headNode = mapper.readTree(jsonCntent);
+            // Step 2: Extract the actual AI-generated text
+            String jsonContent = textNode.asString().trim();
 
-            JsonNode recomNode = headNode.path("recommendation");
-            String recomText = recomNode.asString();
-            List<String> improvements = extractList(headNode.path("improvements"));
-            List<String> suggestions = extractList(headNode.path("suggestions"));
-            List<String> safety = extractList(headNode.path("safety"));
-            Recommendation recommendation = Recommendation
-                    .builder()
+            log.debug("Raw AI-generated content: {}", jsonContent);
+
+            // Step 3: Remove Markdown code fences
+            if (jsonContent.startsWith("```json")) {
+                jsonContent = jsonContent.substring(7).trim();
+            } else if (jsonContent.startsWith("```")) {
+                jsonContent = jsonContent.substring(3).trim();
+            }
+
+            if (jsonContent.endsWith("```")) {
+                jsonContent = jsonContent.substring(
+                        0, jsonContent.length() - 3
+                ).trim();
+            }
+
+            // Step 4: Parse the inner JSON
+            JsonNode headNode = mapper.readTree(jsonContent);
+
+            String recomText = headNode.path("recommendation").asString();
+
+            List<String> improvements =
+                    extractList(headNode.path("improvements"));
+
+            List<String> suggestions =
+                    extractList(headNode.path("suggestions"));
+
+            List<String> safety =
+                    extractList(headNode.path("safety"));
+
+            // Step 5: Build and save the recommendation
+            Recommendation recommendation = Recommendation.builder()
                     .activityId(activity.getId())
                     .userId(activity.getUserId())
                     .recommendation(recomText)
@@ -57,15 +90,21 @@ public class ActivityAIService {
                     .safety(safety)
                     .build();
 
-            recommendationRepository.save(recommendation);
-            return recommendation;
-        }
-        catch(Exception e){
-              throw e;
-        }
+            return recommendationRepository.save(recommendation);
 
+        } catch (Exception e) {
+            log.error(
+                    "Failed to process AI response for activity ID: {}",
+                    activity.getId(),
+                    e
+            );
 
+            throw new IllegalStateException(
+                    "Failed to generate recommendation from AI response", e
+            );
+        }
     }
+
 
     private List<String> extractList(JsonNode improvementNode) {
        List<String> imporvements = new ArrayList<>();
@@ -125,7 +164,15 @@ public class ActivityAIService {
         - If the activity data is insufficient for a specific conclusion,
           acknowledge the limitation.
         - Return valid JSON only, without Markdown fences or extra text.
-
+         - Keep the recommendation between 50 and 100 words.
+         - Return at most 4 improvements.
+        - Return at most 4 suggestions.
+        - Return at most 4 safety points.
+         - Keep each list item under 35 words.
+         - Use concise, practical language.
+        - The first character of the response must be {
+         - The last character of the response must be }
+         - Never use Markdown code fences.
         Required JSON format:
         {
           "recommendation": "Overall activity assessment",
