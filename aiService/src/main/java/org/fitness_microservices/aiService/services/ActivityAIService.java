@@ -4,15 +4,20 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.fitness_microservices.aiService.models.Activity;
 import org.fitness_microservices.aiService.models.Recommendation;
+import org.fitness_microservices.aiService.repositries.RecommendationRepository;
 import org.springframework.stereotype.Service;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class ActivityAIService {
     private final GeminiService geminiService;
+    private final RecommendationRepository recommendationRepository;
 
     public Recommendation generateRecommendation(Activity activity){
         String prompt = createPromptForActivity(activity);
@@ -30,11 +35,48 @@ public class ActivityAIService {
                     .get(0).path("content").path("parts")
                     .get(0).path("text");
 
+           String jsonCntent = textNode.asText()
+                   .replaceAll("\\n","")
+                   .trim();
+//           log.info("Response From Clean AI {}",jsonCntent);
 
+            JsonNode headNode = mapper.readTree(jsonCntent);
+
+            JsonNode recomNode = headNode.path("recommendation");
+            String recomText = recomNode.asString();
+            List<String> improvements = extractList(headNode.path("improvements"));
+            List<String> suggestions = extractList(headNode.path("suggestions"));
+            List<String> safety = extractList(headNode.path("safety"));
+            Recommendation recommendation = Recommendation
+                    .builder()
+                    .activityId(activity.getId())
+                    .userId(activity.getUserId())
+                    .recommendation(recomText)
+                    .improvements(improvements)
+                    .suggestions(suggestions)
+                    .safety(safety)
+                    .build();
+
+            recommendationRepository.save(recommendation);
+            return recommendation;
         }
         catch(Exception e){
-
+              throw e;
         }
+
+
+    }
+
+    private List<String> extractList(JsonNode improvementNode) {
+       List<String> imporvements = new ArrayList<>();
+
+       if(improvementNode.isArray()){
+           improvementNode.forEach(imp -> {
+               imporvements.add(imp.asString());
+           });
+       }
+//       System.out.println("Improvements : "+imporvements);
+       return imporvements;
     }
 
     private String createPromptForActivity(Activity activity) {

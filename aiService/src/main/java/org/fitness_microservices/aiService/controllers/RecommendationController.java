@@ -2,6 +2,7 @@ package org.fitness_microservices.aiService.controllers;
 
 import lombok.RequiredArgsConstructor;
 import org.fitness_microservices.aiService.models.Activity;
+import org.fitness_microservices.aiService.models.Recommendation;
 import org.fitness_microservices.aiService.requests.RecommendationRequest;
 import org.fitness_microservices.aiService.responses.RecommendationResponse;
 import org.fitness_microservices.aiService.responses.ResponseGlobal;
@@ -22,9 +23,20 @@ public class RecommendationController {
     private final ActivityAIService activityAIService;
 
     @GetMapping("generateRecommendation/{activityId}")
-    public String generateRecommendation(@PathVariable String activityId){
+    public RecommendationResponse generateRecommendation(@PathVariable String activityId){
         Activity activity = recommendationService.getActivity(activityId);
-        return activityAIService.generateRecommendation(activity);
+        Recommendation recom =  activityAIService.generateRecommendation(activity);
+
+        return RecommendationResponse.builder()
+                .id(recom.getId())
+                .userId(recom.getUserId())
+                .activityId(recom.getActivityId())
+                .recommendation(recom.getRecommendation())
+                .improvements(recom.getImprovements())
+                .safety(recom.getSafety())
+                .createdAt(recom.getCreatedAt())
+                .updatedAt(recom.getUpdatedAt())
+                .build();
     }
 
     @PostMapping("save")
