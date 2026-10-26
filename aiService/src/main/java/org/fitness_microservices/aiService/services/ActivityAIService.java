@@ -29,6 +29,8 @@ public class ActivityAIService {
             JsonNode textNode = rootNode.path("candidates")
                     .get(0).path("content").path("parts")
                     .get(0).path("text");
+
+
         }
         catch(Exception e){
 
