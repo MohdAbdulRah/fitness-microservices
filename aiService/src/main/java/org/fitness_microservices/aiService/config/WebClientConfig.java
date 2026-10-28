@@ -17,12 +17,12 @@ public class WebClientConfig {
     @Bean
     public WebClient userServiceWebClient(WebClient.Builder webClientBuilder){
         return webClientBuilder.clone()
-                .baseUrl("http://USERSERVICE")
+                .baseUrl("http://USER-SERVICE")
                 .build();
     } @Bean
     public WebClient activityServiceWebClient(WebClient.Builder webClientBuilder){
         return webClientBuilder.clone()
-                .baseUrl("http://ACTIVITYSERVICE")
+                .baseUrl("http://ACTIVITY-SERVICE")
                 .build();
     }
 }
