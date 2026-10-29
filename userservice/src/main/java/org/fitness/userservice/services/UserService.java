@@ -17,7 +17,8 @@ public class UserService {
 
     public User registerUser(RegisterRequest request){
         if(userRepository.existsByEmail(request.getEmail())){
-            throw new RuntimeException("User With Email Already Exists");
+            User user = userRepository.findByEmail(request.getEmail());
+            return user;
         }
         User user = new User();
 
@@ -50,6 +51,6 @@ public class UserService {
     }
 
     public Boolean existsByUserId(String userId) {
-        return userRepository.existsById(userId);
+        return userRepository.existsByKeyCloakId(userId);
     }
 }
