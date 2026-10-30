@@ -49,6 +49,7 @@ public class UserController {
                UserResponse userResponse = new UserResponse();
                userResponse.setId(user.getId());
                userResponse.setEmail(user.getEmail());
+               userResponse.setKeyCloakId(user.getKeyCloakId());
                userResponse.setFirstName(user.getFirstName());
                userResponse.setLastName(user.getLastName());
                userResponse.setUserRole(user.getRole().toString());

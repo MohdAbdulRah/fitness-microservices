@@ -24,6 +24,7 @@ public class UserService {
 
         user.setEmail(request.getEmail());
         user.setPassword(request.getPassword());
+        user.setKeyCloakId(request.getKeyCloakId());
         user.setFirstName(request.getFirstName());
         user.setLastName(request.getLastName());
         try {
